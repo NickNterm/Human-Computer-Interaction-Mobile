@@ -1,11 +1,9 @@
-import 'package:app/app.dart';
 import 'package:app/core/dependency_injection.dart';
-import 'package:app/features/home/presentation/bloc/sensor/sensor_bloc.dart';
+import 'package:app/features/home/presentation/bloc/poi/poi_bloc.dart';
 import 'package:app/features/home/presentation/pages/graph_screen.dart';
 import 'package:app/features/home/presentation/pages/map_screen.dart';
 import 'package:app/utils/extensions/context.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    sl<SensorBloc>().add(GetSensor());
+    sl<PoiBloc>().add(GetPois());
   }
 
   @override
@@ -36,19 +34,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             ListTile(
-              title: Text("Map Data"),
+              title: Text("Χάρτης"),
               onTap: () {
                 setState(() {
                   page = MapScreen();
                 });
+                Navigator.pop(context);
               },
             ),
             ListTile(
-              title: Text("Graph Data"),
+              title: Text("Επιβραβεύσεις"),
               onTap: () {
                 setState(() {
                   page = GraphScreen();
                 });
+                Navigator.pop(context);
               },
             ),
           ],
@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       appBar: AppBar(
         title: Text(
-          "TerraLake",
+          "IoanninaXplorer",
           style: context.textStyles.header2.copyWith(
             color: Colors.white,
           ),

@@ -9,7 +9,7 @@ import 'palette.dart';
 //////////////
 
 Palette kTheme1 = Palette(
-  primaryColor: Colors.indigo,
+  primaryColor: Colors.lightGreen,
   secondaryColor: Color(0xFF526D82),
   backgroundColor: Color(0xFFF2F5F8),
   cardColor: Color(0xFFDDE6ED),

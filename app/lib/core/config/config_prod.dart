@@ -1,3 +1,3 @@
 class ConfigProd {
-  static const String API_URL = 'https://api.prod.com';
+  static const String API_URL = 'http://ioannina.pamelesxi.gr/';
 }

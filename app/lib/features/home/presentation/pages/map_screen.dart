@@ -1,8 +1,8 @@
 import 'package:app/core/dependency_injection.dart';
-import 'package:app/features/home/domain/entities/general_sensor.dart';
-import 'package:app/features/home/presentation/bloc/sensor/sensor_bloc.dart';
+import 'package:app/features/home/domain/entities/poi.dart';
+import 'package:app/features/home/presentation/bloc/poi/poi_bloc.dart';
 import 'package:app/utils/extensions/context.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:app/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -21,6 +21,16 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   late AnimatedMapController controller;
 
+  bool showFilters = false;
+  List<String> filters = [
+    "museum",
+    "art",
+    "castle",
+    "mountain",
+    "shop",
+    "theater",
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -29,12 +39,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
-  GeneralSensor? generalSensor;
+  Poi? selectedPoi;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SensorBloc, SensorState>(
-      bloc: sl<SensorBloc>(),
+    return BlocBuilder<PoiBloc, PoiState>(
+      bloc: sl<PoiBloc>(),
       builder: (context, state) {
         return Stack(
           children: [
@@ -59,17 +69,18 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                 ),
                 MarkerLayer(
-                  markers: state.sensors
+                  markers: state.pois
+                      .where((e) => filters.contains(e.type))
                       .map(
                         (e) => Marker(
-                          point: e.location,
+                          point: LatLng(e.lat, e.lon),
                           height: 40,
                           width: 40,
                           alignment: Alignment.topCenter,
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                generalSensor = e;
+                                selectedPoi = e;
                               });
                             },
                             child: SizedBox(
@@ -89,98 +100,263 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            if (generalSensor != null)
+            if (selectedPoi != null)
               Positioned(
                 bottom: 30,
                 left: 16,
                 right: 16,
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(
-                      20,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      POI_INFO,
+                      arguments: selectedPoi,
+                    );
+                  },
+                  child: Container(
+                    height: 100,
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(
+                        20,
+                      ),
                     ),
-                  ),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                  insetPadding: EdgeInsets.all(16),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          generalSensor!.sensorName,
-                                          style: context.textStyles.header2,
-                                        ),
-                                        SizedBox(
-                                          height: 300,
-                                          child: LineChart(
-                                            mainData(
-                                              context,
-                                              generalSensor!,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Text(
-                            "Open Chart",
-                            style: context.textStyles.body1b.copyWith(
-                              color: context.palette.primaryColor,
-                            ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Icon(
+                            Icons.info,
+                            color: context.palette.primaryColor,
                           ),
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "Name: ${generalSensor!.sensorName}",
-                          ),
-                          Text(
-                            "location: ${generalSensor!.location.latitude}, ${generalSensor!.location.longitude} ",
-                          ),
-                          Text(
-                            "notes: ${generalSensor!.notes}",
-                          ),
-                        ],
-                      ),
-                    ],
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                selectedPoi!.imageUrl,
+                                height: 84,
+                                width: 84,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    selectedPoi!.name,
+                                    style: context.textStyles.body1b,
+                                  ),
+                                  Text(
+                                    selectedPoi!.shortDescription,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             Positioned(
               right: 10,
               top: 10,
-              child: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    showFilters = !showFilters;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                  ),
+                  child: Icon(Icons.menu),
                 ),
-                child: Icon(Icons.menu),
+              ),
+            ),
+            Positioned(
+              right: 10,
+              top: 60,
+              child: Visibility(
+                visible: showFilters,
+                child: AnimatedOpacity(
+                  opacity: showFilters ? 1 : 0,
+                  duration: Duration(milliseconds: 300),
+                  child: Container(
+                    height: 272,
+                    width: 200,
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      children: [
+                        FilterSelection(
+                          text: "Κάστρο",
+                          asset: "castle.png",
+                          isSelected: filters.contains("castle"),
+                          onTap: () {
+                            setState(() {
+                              if (filters.contains("castle")) {
+                                filters.remove("castle");
+                              } else {
+                                filters.add("castle");
+                              }
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        FilterSelection(
+                          text: "Μουσεία",
+                          asset: "museum.png",
+                          isSelected: filters.contains("museum"),
+                          onTap: () {
+                            setState(() {
+                              if (filters.contains("museum")) {
+                                filters.remove("museum");
+                              } else {
+                                filters.add("museum");
+                              }
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        FilterSelection(
+                          text: "Τέχνη",
+                          asset: "art.png",
+                          isSelected: filters.contains("art"),
+                          onTap: () {
+                            setState(() {
+                              if (filters.contains("art")) {
+                                filters.remove("art");
+                              } else {
+                                filters.add("art");
+                              }
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        FilterSelection(
+                          text: "Σπήλαιο",
+                          asset: "mountain.png",
+                          isSelected: filters.contains("mountain"),
+                          onTap: () {
+                            setState(() {
+                              if (filters.contains("mountain")) {
+                                filters.remove("mountain");
+                              } else {
+                                filters.add("mountain");
+                              }
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        FilterSelection(
+                          text: "Μαγαζιά",
+                          asset: "shop.png",
+                          isSelected: filters.contains("shop"),
+                          onTap: () {
+                            setState(() {
+                              if (filters.contains("shop")) {
+                                filters.remove("shop");
+                              } else {
+                                filters.add("shop");
+                              }
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        FilterSelection(
+                          text: "Θέατρο",
+                          asset: "theater.png",
+                          isSelected: filters.contains("theater"),
+                          onTap: () {
+                            setState(() {
+                              if (filters.contains("theater")) {
+                                filters.remove("theater");
+                              } else {
+                                filters.add("theater");
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             )
           ],
         );
       },
+    );
+  }
+}
+
+class FilterSelection extends StatelessWidget {
+  const FilterSelection({
+    super.key,
+    required this.text,
+    required this.asset,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String text;
+  final String asset;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.grey.shade300 : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            Image.asset(
+              "assets/$asset",
+              height: 30,
+              width: 30,
+            ),
+            SizedBox(
+              width: 6,
+            ),
+            Text(text),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:app/features/home/domain/entities/general_sensor.dart';
 
+import '../entities/poi.dart';
+
 abstract class HomeRepository {
-  Future<List<GeneralSensor>> getGeneralSensor();
+  Future<List<Poi>> getPOIs();
 }

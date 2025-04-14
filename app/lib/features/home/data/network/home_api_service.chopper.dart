@@ -18,14 +18,13 @@ final class _$HomeApiService extends HomeApiService {
   final Type definitionType = HomeApiService;
 
   @override
-  Future<Response<BuiltList<GeneralSensorModel>>> getGeneralSensors() {
-    final Uri $url = Uri.parse('/api/general/sensor/');
+  Future<Response<BuiltList<PoiModel>>> getPOIs() {
+    final Uri $url = Uri.parse('/api/poi/');
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
     );
-    return client
-        .send<BuiltList<GeneralSensorModel>, GeneralSensorModel>($request);
+    return client.send<BuiltList<PoiModel>, PoiModel>($request);
   }
 }

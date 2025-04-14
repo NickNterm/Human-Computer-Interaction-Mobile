@@ -1,8 +1,12 @@
+import 'package:app/features/home/domain/entities/poi.dart';
+import 'package:app/features/home/presentation/pages/poi_info.dart';
 import 'package:flutter/material.dart';
 
 import '../core/pages/application.dart';
 
 const String FIRST_SCREEN = '/';
+
+const String POI_INFO = '/poi_info';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -13,6 +17,12 @@ class RouteGenerator {
       case FIRST_SCREEN:
         return MaterialPageRoute(
           builder: (context) => Application(),
+        );
+
+      case POI_INFO:
+        final args = settings.arguments as Poi;
+        return MaterialPageRoute(
+          builder: (context) => PoiInfo(poi: args),
         );
 
       default:

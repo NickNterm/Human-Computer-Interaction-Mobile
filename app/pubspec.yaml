@@ -53,6 +53,8 @@ dependencies:
   # Assets
   flutter_svg: ^2.0.10+1
   cupertino_icons: ^1.0.8
+  flutter_html: ^3.0.0
+  rename_app: ^1.6.2
 
 dev_dependencies:
   flutter_test:
