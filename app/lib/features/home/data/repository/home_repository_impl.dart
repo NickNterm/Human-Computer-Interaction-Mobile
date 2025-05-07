@@ -1,6 +1,8 @@
 import 'package:app/features/home/data/models/poi_model.dart';
+import 'package:app/features/home/data/models/quiz_model.dart';
 import 'package:app/features/home/data/sources/remote_data_source.dart';
 import 'package:app/features/home/domain/entities/poi.dart';
+import 'package:app/features/home/domain/entities/quiz.dart';
 import 'package:built_collection/built_collection.dart';
 
 import '../../domain/repository/home_repository.dart';
@@ -21,5 +23,12 @@ class HomeRepositoryImpl extends HomeRepository {
         )
         .toList();
     return pois;
+  }
+
+  @override
+  Future<Quiz> getQuiz(int poiId) async {
+    QuizModel quizModel = await remoteDataSource.getQuiz(poiId);
+    Quiz quiz = Quiz.fromModel(quizModel);
+    return quiz;
   }
 }

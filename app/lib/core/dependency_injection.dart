@@ -4,6 +4,7 @@ import 'package:app/features/home/data/repository/home_repository_impl.dart';
 import 'package:app/features/home/data/sources/remote_data_source.dart';
 import 'package:app/features/home/domain/repository/home_repository.dart';
 import 'package:app/features/home/presentation/bloc/poi/poi_bloc.dart';
+import 'package:app/features/home/presentation/bloc/quiz/quiz_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -97,6 +98,12 @@ void _initChopper() {
 void _initBlocs() {
   sl.registerLazySingleton(
     () => PoiBloc(
+      repository: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton(
+    () => QuizBloc(
       repository: sl(),
     ),
   );

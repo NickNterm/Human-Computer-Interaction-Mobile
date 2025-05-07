@@ -4,7 +4,7 @@ description: "A new Flutter project."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.2+3
 
 environment:
   sdk: ^3.6.0
@@ -55,6 +55,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_html: ^3.0.0
   rename_app: ^1.6.2
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,7 @@ dev_dependencies:
 
 
   flutter_lints: ^5.0.0
+  change_app_package_name: ^1.5.0
 
 flutter:
   uses-material-design: true

@@ -1,5 +1,8 @@
+import 'package:app/core/dependency_injection.dart';
 import 'package:app/features/home/domain/entities/poi.dart';
+import 'package:app/features/home/presentation/bloc/quiz/quiz_bloc.dart';
 import 'package:app/utils/extensions/context.dart';
+import 'package:app/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:hive/hive.dart';
@@ -65,7 +68,18 @@ class PoiInfo extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                sl<QuizBloc>().add(
+                  ResetEvent(),
+                );
+                sl<QuizBloc>().add(
+                  GetQuizEvent(poiId: poi.id),
+                );
+                Navigator.pushNamed(
+                  context,
+                  QUIZ_SCREEN,
+                );
+              },
               child: Container(
                 width: 300,
                 height: 56,

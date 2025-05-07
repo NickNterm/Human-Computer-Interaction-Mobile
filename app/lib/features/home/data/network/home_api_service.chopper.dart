@@ -27,4 +27,15 @@ final class _$HomeApiService extends HomeApiService {
     );
     return client.send<BuiltList<PoiModel>, PoiModel>($request);
   }
+
+  @override
+  Future<Response<QuizModel>> getQuiz({required int id}) {
+    final Uri $url = Uri.parse('/api/quiz/${id}/');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<QuizModel, QuizModel>($request);
+  }
 }

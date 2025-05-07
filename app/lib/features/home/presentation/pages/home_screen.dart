@@ -1,7 +1,7 @@
 import 'package:app/core/dependency_injection.dart';
 import 'package:app/features/home/presentation/bloc/poi/poi_bloc.dart';
-import 'package:app/features/home/presentation/pages/graph_screen.dart';
 import 'package:app/features/home/presentation/pages/map_screen.dart';
+import 'package:app/features/home/presentation/pages/rewards_screen.dart';
 import 'package:app/utils/extensions/context.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text("Επιβραβεύσεις"),
               onTap: () {
                 setState(() {
-                  page = GraphScreen();
+                  page = RewardsScreen();
                 });
                 Navigator.pop(context);
               },

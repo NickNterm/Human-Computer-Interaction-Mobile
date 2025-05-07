@@ -1,6 +1,11 @@
 part of 'quiz_bloc.dart';
 
-@immutable
-sealed class QuizState {}
+class QuizState {
+  final Quiz? quiz;
+  final int score;
 
-final class QuizInitial extends QuizState {}
+  QuizState({
+    this.quiz,
+    this.score = 0,
+  });
+}
